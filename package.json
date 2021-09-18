@@ -7,6 +7,7 @@
     "start": "node dist/app.js",
     "dev-test": "tsc && node dist/app.js",
     "dev": "nodemon --config nodemon.json src/app.ts",
+    "push": "tsc && git add . && git commit -m Heroku && git push origin main",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
