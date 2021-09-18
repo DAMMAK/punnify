@@ -2,9 +2,9 @@
   "name": "shortUrl",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "dist/app.js",
   "scripts": {
-     "start": "ts-node src/app.ts",
+    "start": "tsc && node dist/app.js",
     "dev": "nodemon --config nodemon.json src/app.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
