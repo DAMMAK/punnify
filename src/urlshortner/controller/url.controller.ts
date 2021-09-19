@@ -7,6 +7,15 @@ import { nanoid } from "nanoid";
 export default class URLController {
   static createURL = async (req: Request, res: Response) => {
     var { url } = req.body;
+    if (!url) {
+      return res.status(400).send({
+        message: "URL is can not be empty",
+      });
+    }
+    // if url does not contain protocol default it to http://
+    if (url.substring(0, 4) !== "http") url = `http://${url}`;
+    console.log("NEW URL AFTER =>", url);
+
     var urlService = new URLShortnerService();
     // check if url is valid
     var isValid = await urlService.checkIfUrlValid(url);
