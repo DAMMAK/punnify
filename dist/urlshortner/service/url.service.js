@@ -4,19 +4,19 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const dns_1 = __importDefault(require("dns"));
+const url_1 = require("url");
 class URLShortnerService {
     constructor() {
         this.checkIfUrlValid = (url) => {
-            console.log(url);
-            const options = {
-                family: 6,
-                hints: dns_1.default.ADDRCONFIG | dns_1.default.V4MAPPED,
-            };
-            return new Promise((resolve, reject) => {
-                dns_1.default.lookup(url, options, (error, address) => {
-                    console.log(error, address);
+            var newUrl = null;
+            // if url does not contain protocol default it to http://
+            if (url.substring(0, 3) !== "http")
+                newUrl = `http://${url}`;
+            var urlObj = new url_1.URL(newUrl !== null && newUrl !== void 0 ? newUrl : url);
+            return new Promise((resolve) => {
+                dns_1.default.lookup(urlObj.host, (error, address) => {
                     if (error) {
-                        return reject(false);
+                        return resolve(false);
                     }
                     resolve(true);
                 });

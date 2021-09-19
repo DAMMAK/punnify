@@ -15,31 +15,36 @@ var _a;
 Object.defineProperty(exports, "__esModule", { value: true });
 const url_service_1 = __importDefault(require("../service/url.service"));
 const url_model_1 = __importDefault(require("../model/url.model"));
+const nanoid_1 = require("nanoid");
+//NB: nanoid generate random which was used to generate the shortUrl
 class URLController {
 }
 exports.default = URLController;
 _a = URLController;
 URLController.createURL = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    console.log("New Request");
     var { url } = req.body;
     var urlService = new url_service_1.default();
-    try {
-        var isValid = yield urlService.checkIfUrlValid(url);
-        if (url.substring(0, 3) !== "http")
-            url = `http://${url}`;
-    }
-    catch (ex) {
-        console.log("Catch block => ", ex);
-        res.status(400).send({
+    // check if url is valid
+    var isValid = yield urlService.checkIfUrlValid(url);
+    // if not valid return error
+    if (!isValid) {
+        return res.status(400).send({
             message: "Invalid url",
         });
     }
+    // if URL is a valid
+    //then check if URL exist in the DB
+    //then return the URL data from the DB
     var urlExist = yield url_model_1.default.findOne({ fullUrl: url }).lean();
     if (urlExist) {
         let { fullUrl, shortUrl } = urlExist;
         return res.send({ fullUrl, shortUrl }).status(200);
     }
-    const { fullUrl, shortUrl } = yield url_model_1.default.create({ fullUrl: url });
+    // if the URL doesn't exist in the DB then create a new entry in the db
+    const { fullUrl, shortUrl } = yield url_model_1.default.create({
+        fullUrl: url,
+        shortUrl: (0, nanoid_1.nanoid)(8),
+    });
     res
         .send({
         fullUrl,
@@ -53,6 +58,7 @@ URLController.getURL = (req, res) => __awaiter(void 0, void 0, void 0, function*
         return res.status(404).send({ error: "Invalid Short url" });
     }
     const { visited, fullUrl, shortUrl } = foundUrl;
+    // update the visited value by 1 in the DB
     foundUrl["visited"] = visited + 1;
     foundUrl.save();
     res
@@ -61,7 +67,6 @@ URLController.getURL = (req, res) => __awaiter(void 0, void 0, void 0, function*
         shortUrl,
     })
         .status(200);
-    // res.redirect("http://blog.dammak.dev");
 });
 URLController.getURLs = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var data = yield url_model_1.default.find().sort({ visited: -1 }).limit(100);

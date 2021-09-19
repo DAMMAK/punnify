@@ -18,7 +18,6 @@ const schema = new mongoose.Schema({
     type: String,
     required: true,
     unique: true,
-    default: nanoid(8),
   },
 
   visited: {

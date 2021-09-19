@@ -1,19 +1,18 @@
 import dns from "dns";
-import urlparser from "url";
+import { URL } from "url";
+import isValidDomain from "is-valid-domain";
+
 export default class URLShortnerService {
   checkIfUrlValid = (url: string): Promise<Boolean> => {
-    console.log(url);
-    const options = {
-      family: 6,
-      hints: dns.ADDRCONFIG | dns.V4MAPPED,
-    };
+    var newUrl: string | null = null;
+    // if url does not contain protocol default it to http://
+    if (url.substring(0, 3) !== "http") newUrl = `http://${url}`;
+    var urlObj = new URL(newUrl ?? url);
 
-    return new Promise((resolve, reject) => {
-      dns.lookup(url, options, (error: any, address: any) => {
-        console.log(error, address);
-
+    return new Promise((resolve) => {
+      dns.lookup(urlObj.host!, (error: any, address: any) => {
         if (error) {
-          return reject(false);
+          return resolve(false);
         }
         resolve(true);
       });

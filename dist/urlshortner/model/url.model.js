@@ -4,7 +4,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importDefault(require("mongoose"));
-const nanoid_1 = require("nanoid");
 const schema = new mongoose_1.default.Schema({
     fullUrl: {
         type: String,
@@ -15,7 +14,6 @@ const schema = new mongoose_1.default.Schema({
         type: String,
         required: true,
         unique: true,
-        default: (0, nanoid_1.nanoid)(8),
     },
     visited: {
         type: Number,
